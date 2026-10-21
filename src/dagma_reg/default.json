@@ -1,0 +1,56 @@
+{
+  "stein": {
+    "eta_G": 0.001,
+    "eta_H": 0.001,
+    "order_data": "raw"
+  },
+  "glasso": {
+    "alpha_scale_fractions": [
+      0.0001,
+      0.0002,
+      0.0005,
+      0.001,
+      0.002,
+      0.005,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.5,
+      1.0
+    ],
+    "cv_folds": 5,
+    "cv_seed": 20260911,
+    "glasso_max_iter": 1000,
+    "glasso_tol": 0.0001,
+    "representation": "correlation"
+  },
+  "bootstrap": {
+    "repetitions": 25,
+    "replace": false,
+    "seed": 20260919,
+    "subsample_size": 1000
+  },
+  "params": {
+    "alpha": 0.501815289490836,
+    "direction": "binary",
+    "gate": "none",
+    "lambda_d": 2.3175277085961845,
+    "lambda_e": 0.25319395844003595,
+    "lambda_s": 0.0002756374551908298,
+    "q_G": 0.7138502771541309,
+    "q_H": 0.42077299145379465
+  },
+  "threshold": 0.1,
+  "training": {
+    "hidden_dim": 8,
+    "T": 6,
+    "lr": 0.0010429441606122837,
+    "lambda2": 0.0005442554166274262,
+    "warm_iter": 3125,
+    "max_iter": 5000
+  },
+  "h_source": "raw",
+  "trace_every": 250
+}
