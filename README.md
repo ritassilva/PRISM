@@ -4,7 +4,14 @@ Nonlinear causal discovery with adaptive regularization based on Graphical
 Lasso, Stein Hessian estimates and SCORE ordering.
 
 PRISM learns a directed graph from a matrix of observations. The package includes a default
-configuration; all model hyperparameters can be overridden.
+configuration; all model hyperparameters can be overridden. Use it to estimate
+candidate causal relationships from tabular data and inspect the priors and
+optimization diagnostics behind a fit.
+
+Start with the [quick start](#quick-start) or the runnable
+[example](examples/causal_discovery.py). Interpreting the estimated edges as
+causal requires the data and modeling assumptions to be appropriate for your
+application; the fitted graph alone does not establish causality.
 
 ## Installation
 
@@ -17,7 +24,7 @@ python -m pip install .
 ```
 
 Dependencies: NumPy, PyTorch and scikit-learn. The Stein estimator is included
-in the package; no Git installation or dodiscover dependency is required.
+in the package, so no separate dodiscover installation is required.
 Installation from this repository is currently supported; the package has not
 yet been published on PyPI.
 
@@ -142,19 +149,29 @@ Stein estimation uses n × n kernel matrices and can be expensive on large sampl
 Local release checks used Python 3.11 on macOS with NumPy 1.26.4 and 2.4.6;
 other Python versions and operating systems have not yet been tested.
 
-## Development
+## Example
+
+After installation, run the [causal discovery example](examples/causal_discovery.py)
+from the repository root:
+
+```bash
+python examples/causal_discovery.py
+```
+
+It generates three synthetic variables, fits PRISM and prints the connection
+magnitudes, estimated adjacency and acyclicity result. To analyze your own data,
+replace `X` with a numeric matrix whose rows are observations and columns are
+variables. Keep the column order when labeling the returned graph.
+
+## Contributing and development
 
 ```bash
 python -m pip install -e '.[dev]'
 python -m pytest
 python -m ruff check src tests examples
-python examples/causal_discovery.py
 python -m build
 python -m twine check dist/*
 ```
-
-The [example](https://github.com/ritassilva/PRISM/blob/main/examples/causal_discovery.py) fits synthetic observations using
-the default configuration and prints the estimated graph.
 
 ## References and license
 
@@ -169,5 +186,5 @@ under Apache 2.0. The bundled Stein estimator retains the MIT license and
 copyright notice from PyWhy in `_stein.py`. The distribution therefore declares
 `Apache-2.0 AND MIT`; this describes its components and does not require choosing
 between the two licenses. External dependencies retain their own licenses.
-See [LICENSE](https://github.com/ritassilva/PRISM/blob/main/LICENSE) and
-[NOTICE](https://github.com/ritassilva/PRISM/blob/main/NOTICE) for details.
+See [LICENSE](LICENSE) and
+[NOTICE](NOTICE) for details.
