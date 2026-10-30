@@ -1,9 +1,9 @@
-# DAGMA-Reg
+# PRISM
 
 Nonlinear causal discovery with adaptive regularization based on Graphical
 Lasso, Stein Hessian estimates and SCORE ordering.
 
-DAGMA-Reg learns a directed graph from a matrix of observations. The package includes a default
+PRISM learns a directed graph from a matrix of observations. The package includes a default
 configuration; all model hyperparameters can be overridden.
 
 ## Installation
@@ -11,8 +11,8 @@ configuration; all model hyperparameters can be overridden.
 Requires Python 3.10 or later.
 
 ```bash
-git clone https://github.com/ritassilva/DAGMA-Reg.git
-cd DAGMA-Reg
+git clone https://github.com/ritassilva/PRISM.git
+cd PRISM
 python -m pip install .
 ```
 
@@ -25,14 +25,14 @@ yet been published on PyPI.
 
 ```python
 import numpy as np
-from dagma_reg import DagmaReg
+from prism import PRISM
 
 rng = np.random.default_rng(7)
 X = rng.normal(size=(100, 3))
 X[:, 1] += np.sin(X[:, 0])
 X[:, 2] += 0.6 * X[:, 1]
 
-model = DagmaReg(seed=0).fit(X)
+model = PRISM(seed=0).fit(X)
 
 W = model.weights_       # Continuous connection magnitudes
 A = model.adjacency_     # Binary adjacency at the default threshold of 0.1
@@ -52,7 +52,7 @@ self edges.
 ## Configuration
 
 ```python
-model = DagmaReg(
+model = PRISM(
     params={"lambda_d": 1.0, "gate": "linear"},
     training={"hidden_dim": 16, "max_iter": 2000},
     glasso={"cv_folds": 3},
@@ -63,7 +63,7 @@ model.fit(X)
 ```
 
 Overrides are merged with the defaults. Inspect the full configuration with
-`from dagma_reg import load_defaults; config = load_defaults()`.
+`from prism import load_defaults; config = load_defaults()`.
 Configuration groups are `params` (regularization), `training` (MLP and optimizer),
 `stein`, `glasso`, and `bootstrap`. `threshold` defaults to 0.1, `seed` to 0,
 `num_threads` to 1, and `trace_every` to 250; set `trace_every=0` to disable
@@ -99,7 +99,7 @@ and `floor20percent` (0.2 + 0.8e).
 The default binary direction uses a single SCORE order. To use subsampling:
 
 ```python
-model = DagmaReg(
+model = PRISM(
     params={"direction": "bootstrap"},
     bootstrap={"subsample_size": 100, "repetitions": 25, "seed": 7},
 )
@@ -128,6 +128,8 @@ Completing the iteration budget does not imply convergence; inspect
 
 ## Data processing and reproducibility
 
+GLasso rejects non-finite precision values, non-positive precision diagonals, and invalid
+partial-correlation denominators with `ValueError`.
 GLasso standardizes its own training folds. SCORE and the Stein Hessian use raw
 observations. DAGMA uses column-standardized data with `ddof=0`; fitted means
 and scales are available as `mean_` and `scale_`. No true graph is required.
@@ -151,21 +153,21 @@ python -m build
 python -m twine check dist/*
 ```
 
-The [example](https://github.com/ritassilva/DAGMA-Reg/blob/main/examples/causal_discovery.py) fits synthetic observations using
+The [example](https://github.com/ritassilva/PRISM/blob/main/examples/causal_discovery.py) fits synthetic observations using
 the default configuration and prints the estimated graph.
 
 ## References and license
 
-DAGMA-Reg is an independent project based on the DAGMA implementation by
+PRISM is an independent project based on the DAGMA implementation by
 Bello, Aragam and Ravikumar (NeurIPS 2022) and Stein estimation code from
 dodiscover/PyWhy. SCORE ordering follows Rolland et al. (ICML 2022).
 These acknowledgments identify the scientific and software foundations;
 they do not imply endorsement by the original authors or projects.
 
-DAGMA-Reg's original code and its DAGMA-derived implementation are licensed
+PRISM's original code and its DAGMA-derived implementation are licensed
 under Apache 2.0. The bundled Stein estimator retains the MIT license and
 copyright notice from PyWhy in `_stein.py`. The distribution therefore declares
 `Apache-2.0 AND MIT`; this describes its components and does not require choosing
 between the two licenses. External dependencies retain their own licenses.
-See [LICENSE](https://github.com/ritassilva/DAGMA-Reg/blob/main/LICENSE) and
-[NOTICE](https://github.com/ritassilva/DAGMA-Reg/blob/main/NOTICE) for details.
+See [LICENSE](https://github.com/ritassilva/PRISM/blob/main/LICENSE) and
+[NOTICE](https://github.com/ritassilva/PRISM/blob/main/NOTICE) for details.

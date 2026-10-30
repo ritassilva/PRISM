@@ -1,6 +1,6 @@
-DAGMA-Reg
+PRISM
 
-DAGMA-Reg's original code is licensed under the Apache License 2.0.
+PRISM's original code is licensed under the Apache License 2.0.
 The bundled Stein estimator retains its MIT license as detailed below.
 The distribution's SPDX license expression is Apache-2.0 AND MIT; this
 identifies the terms applying to its respective components.
@@ -23,7 +23,7 @@ Stein estimation includes SteinMixin and kernel_width adapted from dodiscover
 Source files: dodiscover/toporder/_base.py and dodiscover/toporder/utils.py.
 https://github.com/py-why/dodiscover/tree/6e64456198a5b66e515f250a8f4b143ebc31c9a6
 Copyright (c) 2022 PyWhy. The full MIT license is preserved in
-src/dagma_reg/_stein.py alongside the included implementation.
+src/prism/_stein.py alongside the included implementation.
 
 NumPy, PyTorch and scikit-learn are external dependencies installed separately;
 their code is not bundled in this distribution and retains its own licenses.

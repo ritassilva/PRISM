@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from dagma_reg import DagmaReg
+from prism import PRISM
 
 # Synthetic observations with the generating graph x1 -> x2 -> x3.
 # Replace X with your own raw data: rows are samples, columns are variables.
@@ -14,8 +14,8 @@ x3 = 0.8 * x2 + rng.normal(scale=0.5, size=200)
 X = np.column_stack([x1, x2, x3])
 
 # Use the default hyperparameters. Optional overrides:
-# DagmaReg(seed=0, params={"lambda_d": 1.0}, threshold=0.2)
-model = DagmaReg(seed=0).fit(X)
+# PRISM(seed=0, params={"lambda_d": 1.0}, threshold=0.2)
+model = PRISM(seed=0).fit(X)
 
 # Rows are causes, columns are effects. Weights are unsigned MLP magnitudes.
 np.set_printoptions(precision=3, suppress=True)

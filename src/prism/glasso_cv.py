@@ -49,11 +49,19 @@ def _fit(X: np.ndarray, alpha: float, cfg: dict) -> GraphicalLasso:
 
 
 def partial_correlation(precision: np.ndarray) -> np.ndarray:
-    diagonal = np.abs(np.diag(precision))
+    """Absolute partial correlations; reject invalid normalization references."""
+    precision = np.asarray(precision, dtype=float)
+    if not np.isfinite(precision).all():
+        raise ValueError("GLasso precision matrix contains non-finite values")
+    diagonal = np.diag(precision)
+    if np.any(diagonal <= 0):
+        raise ValueError("GLasso precision diagonal must be strictly positive")
     denominator = np.sqrt(np.outer(diagonal, diagonal))
-    score = np.divide(
-        np.abs(precision), denominator, out=np.zeros_like(precision), where=denominator > 0
-    )
+    if np.any(~np.isfinite(denominator)) or np.any(denominator <= 0):
+        raise ValueError("GLasso partial-correlation denominator must be finite and positive")
+    score = np.abs(precision) / denominator
+    if not np.isfinite(score).all():
+        raise ValueError("GLasso partial correlations contain non-finite values")
     np.fill_diagonal(score, 0.0)
     return score
 

@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dagma-reg"
+name = "prism"
 version = "0.1.0"
 description = "Nonlinear DAGMA with adaptive existence and direction regularization"
 readme = "README.md"
@@ -19,14 +19,14 @@ dependencies = [
 dev = ["pytest>=7", "build>=1", "ruff>=0.9", "twine>=6"]
 
 [project.urls]
-Repository = "https://github.com/ritassilva/DAGMA-Reg"
-Issues = "https://github.com/ritassilva/DAGMA-Reg/issues"
+Repository = "https://github.com/ritassilva/PRISM"
+Issues = "https://github.com/ritassilva/PRISM/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-dagma_reg = ["default.json"]
+prism = ["default.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

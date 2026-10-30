@@ -7,7 +7,7 @@ the bundled implementation. No dodiscover installation is needed to run tests.
 
 import numpy as np
 
-from dagma_reg._stein import SteinMixin, kernel_width
+from prism._stein import SteinMixin, kernel_width
 
 
 def test_upstream_stein_regression():

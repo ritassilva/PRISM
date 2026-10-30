@@ -2,8 +2,8 @@
 import numpy as np
 import pytest
 
-from dagma_reg import DagmaReg, build_lambda, is_acyclic, load_defaults
-from dagma_reg.stein import order_direction
+from prism import PRISM, build_lambda, is_acyclic, load_defaults
+from prism.stein import order_direction
 
 
 def observations():
@@ -17,7 +17,7 @@ def test_defaults_and_isolation():
     assert c["training"]["warm_iter"] == 3125
     assert c["params"]["lambda_d"] == 2.3175277085961845
     c["params"]["alpha"] = -1
-    assert DagmaReg().config["params"]["alpha"] == 0.501815289490836
+    assert PRISM().config["params"]["alpha"] == 0.501815289490836
 
 
 def test_orientation_penalty_and_cycles():
@@ -34,15 +34,15 @@ def test_orientation_penalty_and_cycles():
 
 
 def test_end_to_end_and_repeatability(monkeypatch):
-    from dagma_reg import stein
+    from prism import stein
 
     def unused(*args, **kwargs):
         raise AssertionError("Binary direction must not compute subsamples")
 
     monkeypatch.setattr(stein, "bootstrap_orders", unused)
     kwargs = dict(training={"T": 2, "warm_iter": 5, "max_iter": 8}, trace_every=2)
-    a = DagmaReg(**kwargs).fit(observations())
-    b = DagmaReg(**kwargs).fit(observations())
+    a = PRISM(**kwargs).fit(observations())
+    b = PRISM(**kwargs).fit(observations())
     np.testing.assert_array_equal(a.weights_, b.weights_)
     assert a.weights_.shape == (3, 3)
     assert np.diag(a.lambda_).sum() == np.diag(a.adjacency_).sum() == 0
@@ -53,20 +53,20 @@ def test_end_to_end_and_repeatability(monkeypatch):
 
 
 def test_subsampling_and_invalid_data():
-    model = DagmaReg(
+    model = PRISM(
         params={"direction": "bootstrap"}, bootstrap={"subsample_size": 20, "repetitions": 2}
     )
     priors = model.compute_priors(observations())
     assert priors["bootstrap_orders"].shape == (2, 3)
     np.testing.assert_array_equal(priors["bootstrap"] + priors["bootstrap"].T, np.ones((3, 3)))
     with pytest.raises(ValueError, match="subsample_size"):
-        DagmaReg(params={"direction": "bootstrap"}).compute_priors(observations())
+        PRISM(params={"direction": "bootstrap"}).compute_priors(observations())
     with pytest.raises(ValueError, match="constant"):
-        DagmaReg().fit(np.ones((10, 3)))
+        PRISM().fit(np.ones((10, 3)))
     with pytest.raises(ValueError):
-        DagmaReg(training={"T": 0})
+        PRISM(training={"T": 0})
     with pytest.raises(ValueError):
-        DagmaReg(threshold=-1)
+        PRISM(threshold=-1)
 
 
 @pytest.mark.parametrize(
@@ -84,39 +84,39 @@ def test_subsampling_and_invalid_data():
 )
 def test_invalid_integer_settings(kwargs):
     with pytest.raises(ValueError):
-        DagmaReg(**kwargs)
+        PRISM(**kwargs)
 
 
 def test_invalid_observations():
     with pytest.raises(ValueError, match="real-valued"):
-        DagmaReg().fit(observations().astype(complex) + 1j)
+        PRISM().fit(observations().astype(complex) + 1j)
     with pytest.raises(ValueError, match="finite"):
-        DagmaReg().fit(np.full((10, 3), np.nan))
+        PRISM().fit(np.full((10, 3), np.nan))
     with pytest.raises(ValueError, match="two samples"):
-        DagmaReg(glasso={"cv_folds": 2}).fit(observations()[:3])
+        PRISM(glasso={"cv_folds": 2}).fit(observations()[:3])
 
 
 def test_subsample_size_checked_before_priors(monkeypatch):
-    import dagma_reg.estimator as estimator
+    import prism.estimator as estimator
 
     def unexpected(*args, **kwargs):
         raise AssertionError("Invalid sample size must be caught before computing priors")
 
     monkeypatch.setattr(estimator, "glasso_existence", unexpected)
     with pytest.raises(ValueError, match="subsample_size"):
-        DagmaReg(params={"direction": "bootstrap"}).compute_priors(observations())
+        PRISM(params={"direction": "bootstrap"}).compute_priors(observations())
 
 
 def test_failed_refit_keeps_previous_result(monkeypatch):
-    import dagma_reg.estimator as estimator
+    import prism.estimator as estimator
 
-    model = DagmaReg(training={"T": 1, "max_iter": 5}).fit(observations())
+    model = PRISM(training={"T": 1, "max_iter": 5}).fit(observations())
     previous = (model.priors_, model.lambda_, model.weights_, model.diagnostics_)
 
     def fail(*args, **kwargs):
         raise FloatingPointError("Fit failed")
 
-    monkeypatch.setattr(estimator.DagmaNonlinear, "fit", fail)
+    monkeypatch.setattr(estimator.PrismNonlinear, "fit", fail)
     with pytest.raises(FloatingPointError):
         model.fit(observations() * 2)
     assert all(

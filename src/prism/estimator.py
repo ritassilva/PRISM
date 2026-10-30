@@ -13,14 +13,14 @@ import numpy as np
 import torch
 
 from . import stein
-from .dagma_model import DagmaMLP, DagmaNonlinear
 from .glasso_cv import glasso_existence
 from .penalty import build_lambda
+from .prism_model import PrismMLP, PrismNonlinear
 
 
 def load_defaults():
     """Return an independent copy of the package's default configuration."""
-    return json.loads(files("dagma_reg").joinpath("default.json").read_text())
+    return json.loads(files("prism").joinpath("default.json").read_text())
 
 
 def is_acyclic(adjacency):
@@ -41,7 +41,7 @@ def is_acyclic(adjacency):
     return visited == len(a)
 
 
-class DagmaReg:
+class PRISM:
     """Fit raw observations using the default configuration.
 
     Parameter dictionaries override the corresponding configuration block. Training
@@ -216,7 +216,7 @@ class DagmaReg:
         torch.manual_seed(int(self.seed))
         train = dict(self.config["training"])
         hidden = train.pop("hidden_dim")
-        optimizer = DagmaNonlinear(DagmaMLP([X.shape[1], hidden, 1], bias=True))
+        optimizer = PrismNonlinear(PrismMLP([X.shape[1], hidden, 1], bias=True))
         weights = optimizer.fit(Z, penalty, **train, trace_every=self.trace_every)
         if not np.isfinite(weights).all():
             raise FloatingPointError("Optimization returned non-finite weights")

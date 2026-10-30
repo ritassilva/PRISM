@@ -2,7 +2,7 @@
 """Nonlinear DAGMA with adaptive per-edge regularization.
 
 Based on DAGMA by Bello, Aragam and Ravikumar (NeurIPS 2022); see NOTICE.
-Modified for DAGMA-Reg: adaptive per-edge group L1 regularization,
+Modified for PRISM: adaptive per-edge group L1 regularization,
 optimization history and traces, and removal of experiment-specific code.
 Uses a zero-initialized first layer, log-MSE loss, log-determinant acyclicity,
 adaptive group L1 penalties, and Adam with betas (0.99, 0.999). The central
@@ -54,7 +54,7 @@ class LocallyConnected(nn.Module):
         return out
 
 
-class DagmaMLP(nn.Module):
+class PrismMLP(nn.Module):
     """Structural equations for the causal graph, one MLP per node."""
 
     def __init__(
@@ -99,8 +99,8 @@ class DagmaMLP(nn.Module):
         return torch.sqrt(A).cpu().numpy()
 
 
-class DagmaNonlinear:
-    def __init__(self, model: DagmaMLP, dtype: torch.dtype = torch.double):
+class PrismNonlinear:
+    def __init__(self, model: PrismMLP, dtype: torch.dtype = torch.double):
         self.model = model
         self.dtype = dtype
         self.retries = 0
